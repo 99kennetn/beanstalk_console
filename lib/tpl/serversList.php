@@ -77,7 +77,6 @@ if (!empty($servers)):
                     <?php endforeach ?>
                 </tbody>
             </table>
-            <a href="#servers-add" role="button" class="btn btn-info" id="addServer">Add server</a>
         </div>
     </div>
 <?php else: ?>

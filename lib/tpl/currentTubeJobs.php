@@ -3,7 +3,6 @@
 $fields = $console->getTubeStatFields();
 $groups = $console->getTubeStatGroups();
 $visible = $console->getTubeStatVisible();
-$sampleJobs = $console->getSampleJobs($tube);
 $allStats = $console->getTubeStatValues($tube);
 
 if (!@empty($_COOKIE['tubePauseSeconds'])) {
@@ -13,5 +12,3 @@ if (!@empty($_COOKIE['tubePauseSeconds'])) {
 }
 
 include('currentTubeJobsSummaryTable.php');
-include('currentTubeJobsActionsRow.php');
-include('currentTubeJobsShowcase.php');

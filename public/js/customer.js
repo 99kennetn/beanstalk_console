@@ -1,9 +1,5 @@
 $(document).ready(
         function () {
-
-            var timer;
-            var doAutoRefresh = false;
-
             __init();
 
             function __init() {
@@ -59,44 +55,6 @@ $(document).ready(
                     return false;
                 });
 
-                $('#autoRefresh').on('click', function () {
-                    if (!$('#autoRefresh').hasClass('btn-success')) {
-                        reloader({
-                            'action': 'reloader',
-                            'tplMain': 'ajax',
-                            'tplBlock': 'allTubes',
-                            'secondary': new Date().getTime()
-                        }, {
-                            'containerClass': '#idAllTubes',
-                            'containerClassCopy': '#idAllTubesCopy',
-                        });
-                        $('#autoRefresh').toggleClass('btn-success');
-                    } else {
-                        clearTimeout(timer);
-                        doAutoRefresh = false;
-                        $('#autoRefresh').toggleClass('btn-success');
-                    }
-                    return false;
-                });
-                $('#autoRefreshSummary').on('click', function () {
-                    if (!$('#autoRefreshSummary').hasClass('btn-success')) {
-                        reloader({
-                            'action': 'reloader',
-                            'tplMain': 'ajax',
-                            'tplBlock': 'serversList',
-                            'secondary': new Date().getTime()
-                        }, {
-                            'containerClass': '#idServers',
-                            'containerClassCopy': '#idServersCopy',
-                        });
-                        $('#autoRefreshSummary').toggleClass('btn-success');
-                    } else {
-                        clearTimeout(timer);
-                        doAutoRefresh = false;
-                        $('#autoRefreshSummary').toggleClass('btn-success');
-                    }
-                    return false;
-                });
 
                 if (contentType == 'json') {
                     $('pre code').each(function () {
@@ -131,8 +89,6 @@ $(document).ready(
                     }
                     if (jQuery.inArray(this.id, ['isDisabledUnserialization', 'isDisabledJsonDecode', 'isDisabledJobDataHighlight']) >= 0)
                         val = $(this).is(':checked') ? null : 1;
-                    if (jQuery.inArray(this.id, ['isEnabledAutoRefreshLoad', 'isEnabledBase64Decode']) >= 0)
-                        val = $(this).is(':checked') ? 1 : null;
                     $.cookie(this.id, val, {expires: 365});
                 });
 
@@ -192,15 +148,6 @@ $(document).ready(
                     $('.kick_jobs_no').each(function () {
                         $(this).val(localStorage.getItem($(this).attr('id')) || 10);
                     });
-                }
-
-                if ($.cookie('isEnabledAutoRefreshLoad')) {
-                    if ($('#autoRefresh').length) {
-                        $('#autoRefresh').click();
-                    }
-                    if ($('#autoRefreshSummary').length) {
-                        $('#autoRefreshSummary').click();
-                    }
                 }
             }
 
@@ -295,37 +242,6 @@ $(document).ready(
 
                 return retval;
 
-            }
-
-            function reloader(params, options) {
-                doAutoRefresh = true;
-                $.ajax({
-                    'url': url,
-                    'data': params,
-                    'success': function (data) {
-                        if (doAutoRefresh) {
-                            var ms = 500;
-                            if ($.cookie('autoRefreshTimeoutMs')) {
-                                ms = parseInt($.cookie('autoRefreshTimeoutMs'));
-                            }
-                            if (ms < 200) {
-                                ms = 200;
-                            }
-                            // wrapping all of this to prevent last update
-                            // after you turn it off
-                            var html = $(options.containerClass).html();
-                            $(options.containerClass).html(data);
-                            $(options.containerClassCopy).html(html);
-                            updateTable(options.containerClass, options.containerClassCopy);
-                            timer = setTimeout(reloader, ms, params, options);
-                        }
-                    },
-                    'type': 'GET',
-                    'dataType': 'html',
-                    'error': function () {
-                        console.log('error ajax...');
-                    }
-                });
             }
 
             function updateTable(containerClass, containerClassCopy) {
